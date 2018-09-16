@@ -149,6 +149,7 @@ class App extends Component {
   }
 
   submitData() {
+    console.log(this.state.employeeList);
     const _this = this;
     this.setState({ requesting: true });
     const URL = CONSTANTS.serverUrl + CONSTANTS.api.allotTechnicianShifts;

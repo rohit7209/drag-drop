@@ -23,7 +23,7 @@ const Layout = styled.div`
 const Indicator = styled.div`
   width: 5px;
   height: 90px;
-  background: ${(props) => (props.completed) ? 'rgb(55, 150,198)' : (props.partial) ? 'grey' : 'white'};
+  background: ${(props) => (props.completed) ? CONSTANTS.ui.primaryColor : (props.partial) ? 'grey' : 'white'};
 `;
 
 const Hr = styled.div`
