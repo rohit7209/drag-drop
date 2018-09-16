@@ -3,54 +3,125 @@ import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 import CONSTANTS from './../../constants';
+import Confirm from './../Confirm';
+
+const Img = styled.img`
+  width: 25px; 
+  height: 25px;
+  border-radius: 30px;
+  margin-right: 5px;
+`;
+
+const EmployeeChip = styled.div`
+  display: flex;
+  margin: 5px;
+  line-height: 25px;
+  color: grey;
+  position: relative;
+`;
+
+const Reset = styled(FontAwesome) `
+  font-size: 12px;
+  color: rgba(124, 10, 2, 0.5);
+  cursor: pointer;
+  position: absolute; 
+  right: 3px;
+  top: 3px;
+`;
+
+const Employee = (props) => {
+  return (
+    <EmployeeChip>
+      <Reset name="times" onClick={props.reset} />
+      <Img src={props.imgSrc || require('./../../assets/profile.jpeg')} />
+      {props.name}
+    </EmployeeChip>
+  );
+};
+
 
 const Layout = styled.div`
-  width: 150px;
-  height: 50px;
-  cursor: move;
+  width: calc(100% - 30px);
   background: white;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid ${CONSTANTS.ui.borderColor};
   border-radius: 3px;
-  box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+  box-shadow: 1px 1px 5px ${CONSTANTS.ui.borderColor};
   margin: 10px;
-  overflow: hidden;
-  display:flex;
-  text-align: center;
+  text-align: left;
+  padding: 5px;
+  color: grey;
 `;
 
-const Icon = styled.div`
-  width: 30px;
-  height: 30px;
-  padding: 10px;
-  background: ${CONSTANTS.ui.primaryColor};
-  color: white;
-`;
 
 const Info = styled.div`
-  width: 100px;
-  height: 50px;
-  padding: 15px 5px;
-  color: rgb(55, 150,198);
+  width: calc(100% - 50px);
+  padding: 5px 5px;
+  color: ${CONSTANTS.ui.primaryColor};
+  text-align:left;
+`;
+
+const Title = styled.div`
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid ${CONSTANTS.ui.borderColor};
+`;
+
+const Null = styled.div`
+  padding: 5px;
+  font-size: 10px;
+  color: grey;
 `;
 
 class Shift extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      showConfirm: false,
+    };
+    this.handleCancel = this.handleCancel.bind(this); // method to handle when user clicks cancel
+    this.handleOk = this.handleOk.bind(this); // method to handle when user clicks ok
+  }
+
+  handleCancel() {
+    this.setState({
+      showConfirm: false,
+    });
+  }
+
+  handleOk() {
+    console.log(this.state.tempId);
+    this.props.reset(this.state.tempId);
+    this.handleCancel();
   }
 
   render() {
+    // console.log(this.props);
     return (
       <Layout
         className={this.props.className}
         style={{ ...this.props.shift }}
-        draggable={this.props.draggable}
-        onDragStart={this.props.onDragStart}
+        onDrop={this.props.onDrop}
+        onDragOver={this.props.onDragOver}
       >
-        <Icon><FontAwesome name="clock-o" size="2x" /></Icon>
-        <Info>
-          {this.props.name}
-        </Info>
+        <Title>
+          <Info>
+            <FontAwesome name="clock-o" />
+            &nbsp;
+            {this.props.name}
+          </Info>
+        </Title>
+        {
+          (this.props.employees.length) ?
+            (this.props.employees).map((employee, key) => <Employee key={key} name={employee.name} imgSrc={employee.image} reset={() => this.setState({ showConfirm: true, tempId: employee.id })} />)
+            :
+            <Null>No technician alloted</Null>
+        }
+        <Confirm
+          show={this.state.showConfirm}
+          handleCancel={this.handleCancel}
+          handleOk={this.handleOk}
+          message={`Are you sure you want to remove the allotment?`}
+        />
       </Layout>
     );
   }

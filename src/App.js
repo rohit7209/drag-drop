@@ -44,6 +44,7 @@ class App extends Component {
       success: '',
       showConfirm: false,
       confirmMessage: '',
+      commonShiftEmployees: [],
     };
     this.allowDrop = this.allowDrop.bind(this); // method to control on drag over event
     this.onDrop = this.onDrop.bind(this); // method to control on dropping an element event
@@ -53,11 +54,11 @@ class App extends Component {
     this.handleCancel = this.handleCancel.bind(this); // method to handle situation when user clicks cancel om confirm
     this.handleOk = this.handleOk.bind(this); // method to handle situation when user clicks ok on confirm popup
     this.allotEmployee = this.allotEmployee.bind(this); // updating shift & station to an employee
+    this.onDropCommon = this.onDropCommon.bind(this);
   }
 
   componentWillMount() {
     this.setState({
-      shiftList: CONSTANTS.shiftList,
       stationList: CONSTANTS.stationList,
       employeeList: CONSTANTS.employeeList
     });
@@ -76,21 +77,31 @@ class App extends Component {
    * @param {any} empId id of employee where shift/station is dropped
    * @memberof App
    */
-  onDrop(e, empId) {
+  onDrop(e, stationId, shiftId) {
     e.preventDefault();
-    const id = e.dataTransfer.getData('id');
-    const type = e.dataTransfer.getData('type');
-
+    const empId = e.dataTransfer.getData('id');
     // checkign whether shift/station is alloted or not
-    if (!this.state.employeeList[empId][type] || this.state.employeeList[empId][type].id === id) this.allotEmployee(empId, type, id);
+    if (!this.state.employeeList[empId].station && !this.state.employeeList[empId].shift) this.allotEmployee(empId, stationId, shiftId);
     else {
       // if shift/station is aleadt alloted show confirm popup
       this.setState({
         showConfirm: true,
-        confirmMessage: `Are you sure you want to reset alloted ${type}?`,
-        temp: { empId, type, id }, // setting empId, type & id for temporary use when user clicks ok in confirm
+        confirmMessage: `Are you sure you want to change the shift allotment for '${this.state.employeeList[empId].name}'?`,
+        temp: { empId, stationId, shiftId }, // setting empId, stationId & shiftId for temporary use when user clicks ok in confirm
       })
     }
+  }
+
+  onDropCommon(e) {
+    e.preventDefault();
+    const empId = e.dataTransfer.getData('id');
+    // checkign whether shift/station is alloted or not
+    this.setState({
+      commonShiftEmployees: {
+        ...this.state.commonShiftEmployees,
+        [empId]: { ...this.state.employeeList[empId], id: empId },
+      },
+    });
   }
 
   /**
@@ -100,9 +111,8 @@ class App extends Component {
    * @param {any} id id of shift/station
    * @memberof App
    */
-  onDrag(e, type, id) {
+  onDrag(e, id) {
     e.dataTransfer.setData('id', id);
-    e.dataTransfer.setData('type', type);
   }
 
   /**
@@ -111,20 +121,23 @@ class App extends Component {
    * @param {any} id id of shift/station
    * @memberof App
    */
-  allotEmployee(empId, type, id) {
+  allotEmployee(empId, stationId, shiftId) {
+    const employeeList = this.state.stationList[stationId].shifts[shiftId].employees || {};
+    if (employeeList[empId]) delete employeeList[empId];
     this.setState({
       employeeList: {
         ...this.state.employeeList,
         [empId]: {
           ...this.state.employeeList[empId],
-          [type]: this.state[type + 'List'][id],
-        }
-      }
+          station: this.state.stationList[stationId],
+          shift: this.state.stationList[stationId].shifts[shiftId],
+        },
+      },
     });
   }
 
   handleOk() {
-    this.allotEmployee(this.state.temp.empId, this.state.temp.type, this.state.temp.id);
+    this.allotEmployee(this.state.temp.empId, this.state.temp.stationId, this.state.temp.shiftId);
     this.handleCancel();
   }
 
@@ -135,21 +148,48 @@ class App extends Component {
     });
   }
 
-  reset(empId) {
-    this.setState({
-      employeeList: {
-        ...this.state.employeeList,
-        [empId]: {
-          ...this.state.employeeList[empId],
-          shift: '',
-          station: '',
-        }
+  reset(empId, type) {
+    switch (type.toUpperCase()) {
+      case 'ALL': {
+        const commonShiftEmployees = this.state.commonShiftEmployees;
+        if (commonShiftEmployees[empId]) delete commonShiftEmployees[empId];
+
+        this.setState({
+          employeeList: {
+            ...this.state.employeeList,
+            [empId]: {
+              ...this.state.employeeList[empId],
+              shift: '',
+              station: '',
+            }
+          },
+          commonShiftEmployees,
+        });
       }
-    });
+        break;
+      case 'COMMON': {
+        const commonShiftEmployees = this.state.commonShiftEmployees;
+        if (commonShiftEmployees[empId]) delete commonShiftEmployees[empId];
+        this.setState({ commonShiftEmployees });
+      }
+        break;
+      default: {
+        this.setState({
+          employeeList: {
+            ...this.state.employeeList,
+            [empId]: {
+              ...this.state.employeeList[empId],
+              shift: '',
+              station: '',
+            }
+          },
+        });
+      }
+        break;
+    }
   }
 
   submitData() {
-    console.log(this.state.employeeList);
     const _this = this;
     this.setState({ requesting: true });
     const URL = CONSTANTS.serverUrl + CONSTANTS.api.allotTechnicianShifts;
@@ -168,29 +208,52 @@ class App extends Component {
   }
 
   render() {
+    const stationEmployeeMap = {};
+    Object.keys(this.state.employeeList).forEach(empId => {
+      const emp = this.state.employeeList[empId];
+      if (emp.station.id && emp.shift.id) {
+        if (!stationEmployeeMap[emp.station.id]) stationEmployeeMap[emp.station.id] = {};
+        if (!stationEmployeeMap[emp.station.id][emp.shift.id]) stationEmployeeMap[emp.station.id][emp.shift.id] = [];
+        stationEmployeeMap[emp.station.id][emp.shift.id].push({ ...emp, id: empId });
+      }
+    });
+    const commonShiftEmployees = [];
+    Object.keys(this.state.commonShiftEmployees).forEach(empId => {
+      commonShiftEmployees.push({ ...this.state.employeeList[empId], id: empId });
+    });
+
     return (
       <div className="App" style={{ display: 'flex' }}>
-        <div style={{ width: '78%', padding: '20px 15px' }}>
+        <div style={{ width: 'calc(100% - 315px)', padding: '20px 15px' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {Object.keys(this.state.shiftList || {}).map((shift, key) => <Shift
-              key={key}
-              name={this.state.shiftList[shift].name}
-              draggable
-              onDragStart={(e) => this.onDrag(e, 'shift', this.state.shiftList[shift].id)}
-            />)}
+            <Shift
+              name="Common Shift"
+              onDrop={this.onDropCommon}
+              onDragOver={this.allowDrop}
+              employees={commonShiftEmployees}
+              reset={(empId) => this.reset(empId, 'COMMON')}
+            />
           </div>
           <Hr />
           <div style={{ display: 'flex', flexWrap: 'wrap' }}> {/*, justifyContent: 'space-around'*/}
-            {Object.keys(this.state.employeeList || {}).map((empId, key) =>
-              <Employee
-                key={key}
-                id={empId}
-                onDrop={(e) => { this.onDrop(e, empId); }}
-                onDragOver={this.allowDrop}
-                reset={this.reset}
-                {...this.state.employeeList[empId]}
-              />
-            )}
+            {/* station shift */}
+            {Object.keys(this.state.stationList || {}).map((stationId, key) => <Station
+              key={key}
+              name={this.state.stationList[stationId].name}
+            >
+              {Object.keys(this.state.stationList[stationId].shifts || {}).map((shiftId, key1) => {
+                const employees = [];
+                this.state.employees
+                return <Shift
+                  key={key1}
+                  name={this.state.stationList[stationId].shifts[shiftId].name}
+                  onDrop={(e) => this.onDrop(e, stationId, shiftId)}
+                  onDragOver={this.allowDrop}
+                  employees={(stationEmployeeMap[stationId] || {})[shiftId] || []}
+                  reset={(empId) => this.reset(empId, 'DEFAULT')}
+                />
+              })}
+            </Station>)}
           </div>
           <div style={{ textAlign: 'right', padding: '20px' }}>
             <Button onClick={this.submitData}>
@@ -201,13 +264,18 @@ class App extends Component {
             <br /><Success>{this.state.success}</Success>
           </div>
         </div>
-        <div style={{ width: '22%', background: 'rgba(100,100,100,0.2)', padding: '20px', height: 'calc(100vh - 40px)', overflow: 'auto' }}>
-          {Object.keys(this.state.stationList || {}).map((station, key) => <Station
-            key={key}
-            name={this.state.stationList[station].name}
-            draggable
-            onDragStart={(e) => this.onDrag(e, 'station', this.state.stationList[station].id)}
-          />)}
+        <div style={{ width: '275px', background: 'rgba(100,100,100,0.2)', padding: '20px', height: 'calc(100vh - 40px)', overflow: 'auto' }}>
+          {Object.keys(this.state.employeeList || {}).map((empId, key) =>
+            <Employee
+              key={key}
+              id={empId}
+              draggable
+              onDragStart={(e) => this.onDrag(e, empId)}
+              reset={this.reset}
+              isInCommonShift={this.state.commonShiftEmployees[empId]}
+              {...this.state.employeeList[empId]}
+            />
+          )}
         </div>
         <Confirm
           show={this.state.showConfirm}

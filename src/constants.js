@@ -1,6 +1,7 @@
 const CONSTANTS = {
   ui: {
     primaryColor: 'rgb(55, 150, 198)',
+    borderColor: 'rgba(0,0,0,0.1)',
   },
   serverUrl: 'http://some_url.com',
   api: {
@@ -31,6 +32,90 @@ const CONSTANTS = {
       shift: '',
       station: '',
     },
+    emp41: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp42: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp43: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp44: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp45: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp46: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp47: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp48: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp49: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp40: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp14: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp24: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp34: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
+    emp54: {
+      image: 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg',
+      name: 'name 2 last',
+      shift: '',
+      station: '',
+    },
     emp5: {
       image: '',
       name: 'last name',
@@ -38,27 +123,37 @@ const CONSTANTS = {
       station: '',
     },
   },
-  shiftList: {
-    '1': { id: '1', name: 'Shift 1' },
-    '2': { id: '2', name: 'Shift 2' },
-    '3': { id: '3', name: 'Shift 3' },
-    '4': { id: '4', name: 'Shift 4' },
-    '5': { id: '5', name: 'Shift 5' },
-    '6': { id: '6', name: 'Shift 6' },
-    '7': { id: '7', name: 'Shift 7' },
-    '8': { id: '8', name: 'Shift 8' },
-    '9': { id: '9', name: 'Shift 9' },
-  },
   stationList: {
-    '1': { id: '1', name: 'Station 1' },
-    '2': { id: '2', name: 'Station 2' },
-    '3': { id: '3', name: 'Station 3' },
-    '4': { id: '4', name: 'Station 4' },
-    '5': { id: '5', name: 'Station 5' },
-    '6': { id: '6', name: 'Station 6 Station' },
-    '7': { id: '7', name: 'Station 7' },
-    '8': { id: '8', name: 'Station 8' },
-    '9': { id: '9', name: 'Station 9' },
+    '1': {
+      id: '1',
+      name: 'Station 1',
+      shifts: {
+        '1': { id: '1', name: 'Shift 1' },
+        '2': { id: '2', name: 'Shift 2' },
+        '3': { id: '3', name: 'Shift 3' },
+        '4': { id: '4', name: 'Shift 4' },
+      },
+    },
+    '2': {
+      id: '2',
+      name: 'Station 2',
+      shifts: {
+        '1': { id: '1', name: 'Shift 1' },
+        '2': { id: '2', name: 'Shift 2' },
+        '3': { id: '3', name: 'Shift 3' },
+        '4': { id: '4', name: 'Shift 4' },
+      },
+    },
+    '3': {
+      id: '3',
+      name: 'Station 3',
+      shifts: {
+        '1': { id: '1', name: 'Shift 1' },
+        '2': { id: '2', name: 'Shift 2' },
+        '3': { id: '3', name: 'Shift 3' },
+        '4': { id: '4', name: 'Shift 4' },
+      },
+    },
   },
 };
 

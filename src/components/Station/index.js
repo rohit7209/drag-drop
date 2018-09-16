@@ -5,16 +5,13 @@ import styled from 'styled-components';
 import CONSTANTS from './../../constants';
 
 const Layout = styled.div`
-  width: calc(100% - 20px);
-  height: 50px;
-  cursor: move;
+  width: 250px;
   background: white;
   border: 1px solid rgba(0,0,0,0.1);
   border-radius: 3px;
   box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
   margin: 10px;
   overflow: hidden;
-  display:flex;
   text-align: center;
 `;
 
@@ -28,11 +25,16 @@ const Icon = styled.div`
 
 const Info = styled.div`
   width: calc(100% - 50px);
-  height: 50px;
-  padding: 15px 5px;
-  color: rgb(55, 150,198);
+  padding: 15px 15px;
+  color: white;
 `;
 
+const Title = styled.div`
+  width: 100%;
+  background: ${CONSTANTS.ui.primaryColor};
+  display: flex;
+  text-align: right;
+`;
 
 class Station extends React.Component {
   constructor(props) {
@@ -46,13 +48,14 @@ class Station extends React.Component {
       <Layout
         className={this.props.className}
         style={{ ...this.props.shift }}
-        draggable={this.props.draggable}
-        onDragStart={this.props.onDragStart}
       >
-        <Icon><FontAwesome name="industry" size="2x" /></Icon>
-        <Info>
-          {this.props.name}
-        </Info>
+        <Title>
+          <Icon><FontAwesome name="industry" size="2x" /></Icon>
+          <Info>
+            {this.props.name}
+          </Info>
+        </Title>
+        {this.props.children}
       </Layout>
     );
   }
