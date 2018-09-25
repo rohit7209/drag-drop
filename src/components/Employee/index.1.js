@@ -7,7 +7,7 @@ import CONSTANTS from './../../constants';
 
 const Layout = styled.div`
   width: 250px;
-  height: 60px;
+  height: 90px;
   position: relative;
   border: 2px solid red;
   display: flex;
@@ -22,7 +22,7 @@ const Layout = styled.div`
 
 const Indicator = styled.div`
   width: 5px;
-  height: 60px;
+  height: 90px;
   background: ${(props) => (props.partial) ? 'grey' : (props.completed) ? CONSTANTS.ui.primaryColor : 'white'};
 `;
 
@@ -34,23 +34,23 @@ const Hr = styled.div`
 `;
 
 const Profile = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
 `;
 
 const Details = styled.div`
   width: 155px;
-  height: 60px;
+  height: 90px;
   text-align: center;
   color: grey;
 `;
 
 const Name = styled.div`
   // height: 45px;
-  height: 60px;
+  height: 90px;
   padding: 0px 5px;
-  line-height: 60px;
-  text-align: center;
+  line-height: 45px;
+  text-align: left;
 `;
 
 const Icon = styled.div`
@@ -125,7 +125,7 @@ class Employee extends React.Component {
         <Indicator completed={this.state.shift && this.state.station} partial={this.props.isInCommonShift} />
         <Profile alt="profile" src={this.props.image || require('./../../assets/profile.jpeg')} />
         <Details>
-          <Name>{this.props.name || 'No Name'} {(this.props.lead) ? <FontAwesome name="star" style={{ color: 'gold' }} /> : null}</Name>
+          <Name>{this.props.name || 'No Name'}</Name>
           {/* <Hr /> */}
           {/* <div style={{ display: 'flex' }}>
             <Icon selected={this.state.station}><FontAwesome name="industry" />

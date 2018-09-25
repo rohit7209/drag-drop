@@ -14,10 +14,11 @@ const Img = styled.img`
 
 const EmployeeChip = styled.div`
   display: flex;
-  margin: 5px;
+  padding: 5px;
   line-height: 25px;
   color: grey;
   position: relative;
+  cursor: move;
 `;
 
 const Reset = styled(FontAwesome) `
@@ -27,14 +28,24 @@ const Reset = styled(FontAwesome) `
   position: absolute; 
   right: 3px;
   top: 3px;
+  line-height: 25px;
+`;
+
+const Star = styled(FontAwesome) `
+  font-size: 12px;
+  color: gold;
+  line-height: 25px;
 `;
 
 const Employee = (props) => {
   return (
-    <EmployeeChip>
+    <EmployeeChip
+      draggable
+      onDragStart={props.onDragStart}
+    >
       <Reset name="times" onClick={props.reset} />
       <Img src={props.imgSrc || require('./../../assets/profile.jpeg')} />
-      {props.name}
+      {props.name} {(props.lead) ? <Star name="star" /> : null}
     </EmployeeChip>
   );
 };
@@ -89,7 +100,7 @@ class Shift extends React.Component {
   }
 
   handleOk() {
-    console.log(this.state.tempId);
+    // console.log(this.state.tempId);
     this.props.reset(this.state.tempId);
     this.handleCancel();
   }
@@ -112,7 +123,14 @@ class Shift extends React.Component {
         </Title>
         {
           (this.props.employees.length) ?
-            (this.props.employees).map((employee, key) => <Employee key={key} name={employee.name} imgSrc={employee.image} reset={() => this.setState({ showConfirm: true, tempId: employee.id })} />)
+            (this.props.employees).map((employee, key) => <Employee
+              onDragStart={(e) => this.props.onDragStart(e, employee.id)}
+              key={key}
+              name={employee.name}
+              imgSrc={employee.image}
+              lead={employee.lead}
+              reset={() => this.setState({ showConfirm: true, tempId: employee.id })}
+            />)
             :
             <Null>No technician alloted</Null>
         }
