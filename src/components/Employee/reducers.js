@@ -1,25 +1,25 @@
 import {
   EMP_UPDATE_LIST,
-  EMP_INITIAL_LIST,
+  EMP_FILTER_LIST,
 } from './constants';
 
 
 const initialState = {
   list: {},
-  updatedList: {},
+  filteredList: {},
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case EMP_UPDATE_LIST:
+    case EMP_FILTER_LIST:
       return Object.assign({}, state, {
-        updatedList: action.payload,
+        filteredList: action.payload,
       });
-    case EMP_INITIAL_LIST:
+    case EMP_UPDATE_LIST:
       console.log(action.payload);
       return Object.assign({}, state, {
         list: action.payload,
-        updatedList: action.payload,
+        filteredList: action.payload,
       });
     default:
       return state;

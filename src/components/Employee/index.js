@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import Confirm from './../Confirm';
 import CONSTANTS from './../../constants';
+import { updateList } from './actions';
 
 const Layout = styled.div`
   width: 250px;
@@ -84,6 +86,7 @@ class Employee extends React.Component {
     };
     this.handleCancel = this.handleCancel.bind(this); // method to handle when user clicks cancel
     this.handleOk = this.handleOk.bind(this); // method to handle when user clicks ok
+    this.onDrop = this.onDrop.bind(this);
   }
 
   componentWillMount() {
@@ -109,6 +112,24 @@ class Employee extends React.Component {
     this.handleCancel();
   }
 
+  allowDrop(e) {
+    e.preventDefault();
+  }
+
+  onDrop(e, empId) {
+    e.preventDefault();
+    // console.log(id);
+    const lead = e.dataTransfer.getData('lead');
+    // console.log(lead);
+    if (lead) this.props.updateList({
+      ...this.props.employeeList,
+      [empId]: {
+        ...this.props.employeeList[empId],
+        lead: !this.props.employeeList[empId].lead,
+      },
+    });
+  }
+
   render() {
     // http://via.placeholder.com/90x90
     // console.log(this.props);
@@ -120,6 +141,8 @@ class Employee extends React.Component {
         style={{ ...this.props.style }}
         draggable={this.props.draggable}
         onDragStart={this.props.onDragStart}
+        onDrop={(e) => this.onDrop(e, this.props.id)}
+        onDragOver={this.allowDrop}
       >
         <Reset name="times" onClick={() => this.setState({ showConfirm: true })} />
         <Indicator completed={this.state.shift && this.state.station} partial={this.props.isInCommonShift} />
@@ -163,4 +186,15 @@ Employee.defaultProps = {
   style: {},
 };
 
-export default Employee;
+
+const mapStateToProps = state => ({
+  employeeList: state.Employee.list,
+  filteredList: state.Employee.filteredList,
+});
+
+const mapDispatchToProps = dispatch => ({
+  // updateList: payload => dispatch(setInitialList(payload)),
+  updateList: payload => dispatch(updateList(payload)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Employee);

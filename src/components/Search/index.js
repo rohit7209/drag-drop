@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { updateList } from './../Employee/actions';
+import { updateList, filterList } from './../Employee/actions';
 
 const Input = styled.input`
   width: calc(100% - 20px);
@@ -19,7 +19,7 @@ class Search extends React.Component {
   }
 
   makeSearch(key) {
-    console.log('key::', key, this.props.employeeList);
+    // console.log('key::', key, this.props.employeeList);
     const result = {};
     Object.keys(this.props.employeeList).forEach(id => {
       if (this.props.employeeList[id].name.toLowerCase().includes(key.toLowerCase())) result[id] = this.props.employeeList[id];
@@ -44,7 +44,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateList: payload => dispatch(updateList(payload)),
+  updateList: payload => dispatch(filterList(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);

@@ -1,14 +1,14 @@
 import {
+  EMP_FILTER_LIST,
   EMP_UPDATE_LIST,
-  EMP_INITIAL_LIST,
 } from './constants';
 
 export const updateList = (payload) => ({
   type: EMP_UPDATE_LIST,
-  payload
+  payload,
 });
 
-export const setInitialList = (payload) => ({
-  type: EMP_INITIAL_LIST,
-  payload
+export const filterList = (payload) => ({
+  type: EMP_FILTER_LIST,
+  payload,
 });
