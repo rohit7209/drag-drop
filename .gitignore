@@ -8,8 +8,8 @@
 
 # production
 /build*
-/cb
-/cb.*
+/cb*
+/src1*
 
 
 # misc

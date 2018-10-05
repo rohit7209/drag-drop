@@ -1,0 +1,2 @@
+export const EMP_UPDATE_LIST = 'EMP_UPDATE_LIST';
+export const EMP_INITIAL_LIST = 'EMP_INITIAL_LIST';

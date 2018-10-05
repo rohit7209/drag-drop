@@ -1,37 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducers from './reducers';
 import './index.css';
 import App from './App';
 
-// class DragDrop extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {};
-//   }
+const store = createStore(reducers);
 
-//   onDrop(e) {
-//     e.preventDefault();
-//     console.log('dropped', e);
-//   }
-
-
-//   render() {
-//     return (
-//       <div>
-
-//         <div
-//           onDrop={(e) => { this.onDrop(e, empId); }}
-//           onDragOver={this.allowDrop}
-//         >
-//         </div>
-
-//       </div>
-//     );
-//   }
-// }
-
-// DragDrop.propTypes = {};
-
-
-
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<Provider store={store}>
+  <App />
+</Provider>, document.getElementById('root'));

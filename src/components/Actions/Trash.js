@@ -69,7 +69,7 @@ class Trash extends React.Component {
     return (
       <Wrap>
         <Button onClick={() => this.confirm('Are you sure you want to reset all the changes?')}>
-          {(this.state.requesting) ? <LoaderIcon /> : 'Trash'}
+          {(this.state.requesting) ? <LoaderIcon /> : 'Reset'}
         </Button>
         <br />
         {(this.state.error) ? <Error>{this.state.error}</Error> : null}

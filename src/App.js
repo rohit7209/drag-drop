@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+
 import CONSTANTS from './constants';
 import Employee from './components/Employee';
 import Shift from './components/Shift';
@@ -13,6 +15,10 @@ import SubmitBtn from './components/Actions/Submit';
 import TrashBtn from './components/Actions/Trash';
 import Loader from './components/Loader';
 import { Error } from './components/Actions/Components'
+
+import { setInitialList } from './components/Employee/actions'
+import Search from './components/Search';
+
 // console.log(CONSTANTS);
 
 const Hr = styled.div`
@@ -46,6 +52,7 @@ class App extends Component {
   }
 
   componentWillMount() {
+    this.props.setInitialEmpList(CONSTANTS.employeeList);
     this.setState({
       stationList: CONSTANTS.stationList,
       employeeList: CONSTANTS.employeeList,
@@ -241,20 +248,23 @@ class App extends Component {
         <div style={{ textAlign: 'center', padding: '20px' }}><Loader color="rgb(55, 150, 198)" style={{ margin: 'auto' }} /></div>
         :
         <div className="App" style={{ display: 'flex' }}>
-          <div style={{ width: 'calc(100% - 315px)', padding: '20px 15px' }}>
+          <div style={{ width: 'calc(100% - 415px)', padding: '20px 15px' }}>
             <div style={{ padding: '15px' }}><Error>{this.state.error}</Error></div>
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              <Shift
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+              {/* <Shift
                 name="Common Shift"
                 onDrop={this.onDropCommon}
                 onDragOver={this.allowDrop}
                 employees={commonShiftEmployees}
                 reset={(empId) => this.reset(empId, 'COMMON')}
                 onDragStart={this.onDrag}
-              />
+              /> */}
+              <button style={{ border: 'none', color: 'white', background: 'rgb(55, 150, 198)', padding: '15px', minWidth: '120px' }}>Add Shift</button>
+              <button style={{ padding: '10px', background: 'transparent', border: '1px solid rgb(55, 150, 198)', fontSize: '22px' }}><FontAwesome name="star" style={{ color: 'yellow' }} />
+              </button>
             </div>
-            <Hr />
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}> {/*, justifyContent: 'space-around'*/}
+            <hr />
+            <div style={{ display: 'flex', overflow: 'auto', flex: 2 }}> {/*, justifyContent: 'space-around'*/}
               {/* station shift */}
               {Object.keys(this.state.stationList || {}).map((stationId, key) => <Station
                 key={key}
@@ -276,37 +286,38 @@ class App extends Component {
               </Station>)}
             </div>
 
-            <div style={{ display: 'flex', padding: '20px 10px', justifyContent: 'space-between' }}>
-              <TrashBtn
-                updateState={this.updateState}
-                employeeList={this.state.employeeList}
-                stationList={this.state.stationList}
-                commonShiftEmployees={this.state.commonShiftEmployees}
-              />
-              <SaveBtn
-                updateState={this.updateState}
-                employeeList={this.state.employeeList}
-                stationList={this.state.stationList}
-                commonShiftEmployees={this.state.commonShiftEmployees}
-              />
+            <div style={{ marginTop: '20px', display: 'flex', padding: '20px 10px', justifyContent: 'flex-end' }}>
               <SubmitBtn
                 updateState={this.updateState}
                 employeeList={this.state.employeeList}
                 stationList={this.state.stationList}
                 commonShiftEmployees={this.state.commonShiftEmployees}
               />
+              <TrashBtn
+                updateState={this.updateState}
+                employeeList={this.state.employeeList}
+                stationList={this.state.stationList}
+                commonShiftEmployees={this.state.commonShiftEmployees}
+              />
+              {/* <SaveBtn
+                updateState={this.updateState}
+                employeeList={this.state.employeeList}
+                stationList={this.state.stationList}
+                commonShiftEmployees={this.state.commonShiftEmployees}
+              /> */}
             </div>
           </div>
-          <div style={{ width: '275px', background: 'rgba(100,100,100,0.2)', padding: '20px', height: 'calc(100vh - 40px)', overflow: 'auto' }}>
-            {Object.keys(this.state.employeeList || {}).map((empId, key) => {
-              return (this.state.employeeList[empId].shift && this.state.employeeList[empId].station) || this.state.commonShiftEmployees[empId] ? null : <Employee
+          <div style={{ width: '275px', marginLeft: '100px', background: 'rgba(100,100,100,0.2)', padding: '20px', height: 'calc(100vh - 40px)', overflow: 'auto' }}>
+            <Search />
+            {Object.keys(this.props.employeeList || {}).map((empId, key) => {
+              return (this.props.employeeList[empId].shift && this.props.employeeList[empId].station) || this.state.commonShiftEmployees[empId] ? null : <Employee
                 key={key}
                 id={empId}
                 draggable
                 onDragStart={(e) => this.onDrag(e, empId)}
                 reset={this.reset}
                 isInCommonShift={this.state.commonShiftEmployees[empId]}
-                {...this.state.employeeList[empId]}
+                {...this.props.employeeList[empId]}
               />
             }
             )}
@@ -322,4 +333,12 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  employeeList: state.Employee.updatedList,
+});
+
+const mapDispatchToProps = dispatch => ({
+  setInitialEmpList: payload => dispatch(setInitialList(payload)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

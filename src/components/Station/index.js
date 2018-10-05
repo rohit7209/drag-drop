@@ -5,14 +5,16 @@ import styled from 'styled-components';
 import CONSTANTS from './../../constants';
 
 const Layout = styled.div`
-  width: 250px;
+  min-width: 250px;
   background: white;
   border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 3px;
+  // border-radius: 3px;
   box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
   margin: 10px;
-  overflow: hidden;
+  overflow-x: horizontal;
   text-align: center;
+  cursor : move;
+  min-height: min-content;
 `;
 
 const Icon = styled.div`
@@ -45,6 +47,7 @@ class Station extends React.Component {
   render() {
     // console.log(this.props);
     return (
+  
       <Layout
         className={this.props.className}
         style={{ ...this.props.shift }}
@@ -57,6 +60,7 @@ class Station extends React.Component {
         </Title>
         {this.props.children}
       </Layout>
+ 
     );
   }
 }

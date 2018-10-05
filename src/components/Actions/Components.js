@@ -22,6 +22,7 @@ export const Button = styled.button`
   padding: 15px;
   min-width: 150px;
   cursor: pointer;
+  margin: 2px;
 `;
 
 export const Wrap = styled.span`

@@ -13,7 +13,7 @@ const Layout = styled.div`
   display: flex;
   background: white;
   border: 1px solid ${(props) => (props.partial) ? 'grey' : (props.completed) ? CONSTANTS.ui.primaryColor : 'rgba(0,0,0,0.1)'};
-  border-radius: 5px;
+  // border-radius: 5px;
   box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
   margin: 10px;
   overflow: hidden;
