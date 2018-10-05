@@ -83,6 +83,8 @@ class App extends Component {
               station: (employee.shiftID) ? self.state.stationList[employee.stationID] : '',
             }
           });
+          // console.log('emp:', employeeList, response);
+          self.props.updateList(employeeList);
           self.setState({
             employeeList,
             commonShiftEmployees,
@@ -315,13 +317,13 @@ class App extends Component {
             <div style={{ marginTop: '20px', display: 'flex', padding: '20px 10px', justifyContent: 'flex-end' }}>
               <SubmitBtn
                 updateState={this.updateState}
-                employeeList={this.state.employeeList}
+                employeeList={this.props.employeeList}
                 stationList={this.state.stationList}
                 commonShiftEmployees={this.state.commonShiftEmployees}
               />
               <TrashBtn
                 updateState={this.updateState}
-                employeeList={this.state.employeeList}
+                employeeList={this.props.employeeList}
                 stationList={this.state.stationList}
                 commonShiftEmployees={this.state.commonShiftEmployees}
               />
