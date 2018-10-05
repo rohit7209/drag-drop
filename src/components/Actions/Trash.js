@@ -65,7 +65,7 @@ class Trash extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    // console.log(this.props);
     return (
       <Wrap>
         <Button onClick={() => this.confirm('Are you sure you want to reset all the changes?')}>

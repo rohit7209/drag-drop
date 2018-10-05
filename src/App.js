@@ -50,6 +50,7 @@ class App extends Component {
     this.allotEmployee = this.allotEmployee.bind(this); // updating shift & station to an employee
     this.onDropCommon = this.onDropCommon.bind(this);
     this.updateState = this.updateState.bind(this);
+    this.addCommonShift = this.addCommonShift.bind(this);
   }
 
   componentWillMount() {
@@ -125,14 +126,17 @@ class App extends Component {
     }
   }
 
-  onDropCommon(e) {
+  onDropCommon(e, id) {
     e.preventDefault();
     const empId = e.dataTransfer.getData('id');
     // checkign whether shift/station is alloted or not
     this.setState({
       commonShiftEmployees: {
         ...this.state.commonShiftEmployees,
-        [empId]: { ...this.state.employeeList[empId], id: empId },
+        [id]: [
+          ...this.state.commonShiftEmployees[id],
+          { ...this.props.employeeList[empId], id: empId },
+        ],
       },
     });
   }
@@ -180,11 +184,11 @@ class App extends Component {
     });
   }
 
-  reset(empId, type) {
+  reset(empId, type, commonShiftId) {
     switch (type.toUpperCase()) {
       case 'ALL': {
-        const commonShiftEmployees = this.state.commonShiftEmployees;
-        if (commonShiftEmployees[empId]) delete commonShiftEmployees[empId];
+        // const commonShiftEmployees = this.state.commonShiftEmployees;
+        // if (commonShiftEmployees[empId]) delete commonShiftEmployees[empId];
         this.props.updateList({
           ...this.props.employeeList,
           [empId]: {
@@ -196,9 +200,18 @@ class App extends Component {
       }
         break;
       case 'COMMON': {
-        const commonShiftEmployees = this.state.commonShiftEmployees;
-        if (commonShiftEmployees[empId]) delete commonShiftEmployees[empId];
-        this.setState({ commonShiftEmployees });
+        const employeeList = this.state.commonShiftEmployees[commonShiftId];
+        let id;
+        employeeList.forEach((emp, index) => {
+          if (emp.id === empId) id = index;
+        });
+        if (id !== undefined) employeeList.splice(id, 1);
+        this.setState({
+          commonShiftEmployees: {
+            ...this.state.commonShiftEmployees,
+            [commonShiftId]: [...employeeList],
+          },
+        });
       }
         break;
       default: {
@@ -215,13 +228,20 @@ class App extends Component {
     }
   }
 
-
   updateState(values) {
     this.setState({
       ...values,
     })
   }
 
+  addCommonShift() {
+    this.setState({
+      commonShiftEmployees: {
+        ...this.state.commonShiftEmployees,
+        [Object.keys(this.state.commonShiftEmployees).length + 1]: [],
+      },
+    });
+  }
 
   render() {
     // console.log(this.state);
@@ -235,10 +255,14 @@ class App extends Component {
       }
     });
 
-    const commonShiftEmployees = [];
-    Object.keys(this.state.commonShiftEmployees).forEach(empId => {
-      commonShiftEmployees.push({ ...this.state.employeeList[empId], id: empId });
-    });
+    // const commonShiftEmployees = {};
+    // Object.keys(this.state.commonShiftEmployees).forEach(commonShiftId => {
+    //   this.state.commonShiftEmployees[commonShiftId].forEach(empId => {
+    //     commonShiftEmployees[empId] = { ...this.props.employeeList[empId], id: empId };
+    //   });
+    // });
+
+    // console.log(commonShiftEmployees);
 
     return (
       (this.state.loading) ?
@@ -248,15 +272,21 @@ class App extends Component {
           <div style={{ width: 'calc(100% - 415px)', padding: '20px 15px' }}>
             <div style={{ padding: '15px' }}><Error>{this.state.error}</Error></div>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-              {/* <Shift
-                name="Common Shift"
-                onDrop={this.onDropCommon}
-                onDragOver={this.allowDrop}
-                employees={commonShiftEmployees}
-                reset={(empId) => this.reset(empId, 'COMMON')}
-                onDragStart={this.onDrag}
-              /> */}
-              <button style={{ border: 'none', color: 'white', background: 'rgb(55, 150, 198)', padding: '15px', minWidth: '120px' }}>Add Shift</button>
+              {Object.keys(this.state.commonShiftEmployees).map(commonShiftId =>
+                <Shift
+                  name={`Common Shift ${commonShiftId}`}
+                  onDrop={(e) => this.onDropCommon(e, commonShiftId)}
+                  onDragOver={this.allowDrop}
+                  employees={this.state.commonShiftEmployees[commonShiftId]}
+                  reset={(empId) => this.reset(empId, 'COMMON', commonShiftId)}
+                  onDragStart={this.onDrag}
+                />
+              )}
+
+              <button
+                onClick={this.addCommonShift}
+                style={{ cursor: 'pointer', border: 'none', color: 'white', background: 'rgb(55, 150, 198)', padding: '15px', minWidth: '120px' }}
+              >Add Shift</button>
               <LeadBadge />
             </div>
             <hr />
@@ -306,13 +336,13 @@ class App extends Component {
           <div style={{ width: '275px', marginLeft: '100px', background: 'rgba(100,100,100,0.2)', padding: '20px', height: 'calc(100vh - 40px)', overflow: 'auto' }}>
             <Search />
             {Object.keys(this.props.filteredList || {}).map((empId, key) => {
-              return (this.props.filteredList[empId].shift && this.props.filteredList[empId].station) || this.state.commonShiftEmployees[empId] ? null : <Employee
+              return (this.props.filteredList[empId].shift && this.props.filteredList[empId].station) ? null : <Employee
                 key={key}
                 id={empId}
                 draggable
                 onDragStart={(e) => this.onDrag(e, empId)}
                 reset={this.reset}
-                isInCommonShift={this.state.commonShiftEmployees[empId]}
+                // isInCommonShift={commonShiftEmployees[empId]}
                 {...this.props.filteredList[empId]}
               />
             }

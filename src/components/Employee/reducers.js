@@ -16,7 +16,6 @@ export default (state = initialState, action) => {
         filteredList: action.payload,
       });
     case EMP_UPDATE_LIST:
-      console.log(action.payload);
       return Object.assign({}, state, {
         list: action.payload,
         filteredList: action.payload,
