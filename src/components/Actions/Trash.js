@@ -50,6 +50,7 @@ class Trash extends React.Component {
         console.log('submit', response);
         self.setState({ requesting: false, error: '', success: 'deleted successfully!' });
         self.props.updateState({ employeeList, commonShiftEmployees: [] });
+        self.props.updateList(employeeList);
       })
       .catch(function (error) {
         console.log('error', error);

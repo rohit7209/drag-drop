@@ -53,6 +53,7 @@ const Employee = (props) => {
 
 const Layout = styled.div`
   width: calc(100% - 30px);
+  // max-width: 300px;
   background: white;
   border: 1px solid ${CONSTANTS.ui.borderColor};
   border-radius: 3px;
@@ -65,7 +66,7 @@ const Layout = styled.div`
 
 
 const Info = styled.div`
-  width: calc(100% - 50px);
+  width: calc(100% - 0px);
   padding: 5px 5px;
   color: ${CONSTANTS.ui.primaryColor};
   text-align:left;
@@ -87,22 +88,35 @@ class Shift extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      shiftDelete: false,
       showConfirm: false,
+      confirmMsg: 'Are you sure you want to remove the allotment?',
     };
     this.handleCancel = this.handleCancel.bind(this); // method to handle when user clicks cancel
     this.handleOk = this.handleOk.bind(this); // method to handle when user clicks ok
+    this.onClose = this.onClose.bind(this);
   }
 
   handleCancel() {
     this.setState({
       showConfirm: false,
+      confirmMsg: 'Are you sure you want to remove the allotment?',
     });
   }
 
   handleOk() {
     // console.log(this.state.tempId);
-    this.props.reset(this.state.tempId);
+    if (this.state.shiftDelete) this.props.onClose();
+    else this.props.reset(this.state.tempId);
     this.handleCancel();
+  }
+
+  onClose() {
+    this.setState({
+      confirmMsg: 'Are you sure you want to delete the shift along with allotments?',
+      showConfirm: true,
+      shiftDelete: true,
+    });
   }
 
   render() {
@@ -119,6 +133,7 @@ class Shift extends React.Component {
             <FontAwesome name="clock-o" />
             &nbsp;
             {this.props.name}
+            {(this.props.onClose) ? <FontAwesome name="times" style={{ color: 'red', float: 'right', cursor: 'pointer' }} onClick={this.onClose} /> : null}
           </Info>
         </Title>
         {
@@ -138,7 +153,7 @@ class Shift extends React.Component {
           show={this.state.showConfirm}
           handleCancel={this.handleCancel}
           handleOk={this.handleOk}
-          message={`Are you sure you want to remove the allotment?`}
+          message={this.state.confirmMsg}
         />
       </Layout>
     );

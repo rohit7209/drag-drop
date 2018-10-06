@@ -51,6 +51,7 @@ class App extends Component {
     this.onDropCommon = this.onDropCommon.bind(this);
     this.updateState = this.updateState.bind(this);
     this.addCommonShift = this.addCommonShift.bind(this);
+    this.closeShift = this.closeShift.bind(this);
   }
 
   componentWillMount() {
@@ -245,6 +246,12 @@ class App extends Component {
     });
   }
 
+  closeShift(id) {
+    const commonShiftEmployees = this.state.commonShiftEmployees;
+    if (commonShiftEmployees[id]) delete commonShiftEmployees[id];
+    this.setState({ commonShiftEmployees });
+  }
+
   render() {
     // console.log(this.state);
     const stationEmployeeMap = {};
@@ -276,6 +283,7 @@ class App extends Component {
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
               {Object.keys(this.state.commonShiftEmployees).map(commonShiftId =>
                 <Shift
+                  onClose={() => this.closeShift(commonShiftId)}
                   name={`Common Shift ${commonShiftId}`}
                   onDrop={(e) => this.onDropCommon(e, commonShiftId)}
                   onDragOver={this.allowDrop}
@@ -323,6 +331,7 @@ class App extends Component {
               />
               <TrashBtn
                 updateState={this.updateState}
+                updateList={this.props.updateList}
                 employeeList={this.props.employeeList}
                 stationList={this.state.stationList}
                 commonShiftEmployees={this.state.commonShiftEmployees}
